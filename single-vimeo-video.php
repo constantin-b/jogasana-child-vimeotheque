@@ -67,11 +67,30 @@ get_header(); ?>
 						<?php printf( '<div class="sticky-post label-top">%s</div>', esc_html__( 'Featured', 'jogasana' ) ); ?>
 					<?php endif; ?>
 					
-					<?php if ( ! post_password_required() ) : ?>
-						<div class="thumbnail-attachment">
-							<?php cvm_video_embed_html(); ?>
-						</div>
-					<?php endif; ?>
+					<?php if( !is_user_logged_in() ):?>
+						<?php if ( has_post_thumbnail() && ! post_password_required() && ! is_attachment() ) : ?>
+                            <div class="thumbnail-attachment">
+								<?php
+								$thumbnail = Jogasana_Helper::get_the_post_thumbnail( $this_id, $image_size, true, '', $thumbnail_atts );
+								echo wp_kses_post($thumbnail);
+								?>
+
+								<?php if ( in_array('cats', $jogasana_settings['single-post-metas']) ) { ?>
+									<?php $categories_post = get_the_category_list(' ', '', $this_id);?>
+									<?php if ( !empty($categories_post) ): ?>
+                                        <div class="entry-label">
+											<?php echo wp_kses_post($categories_post); ?>
+                                        </div>
+									<?php endif; ?>
+								<?php  } ?>
+
+                            </div>
+						<?php endif; ?>
+                    <?php elseif ( ! post_password_required() ) : ?>
+                        <div class="thumbnail-attachment">
+                            <?php cvm_video_embed_html(); ?>
+                        </div>
+                    <?php endif ;?>
 
 					<div class="single-content content-element3">
 						<?php if ( !empty($this_post['content']) ): ?>
